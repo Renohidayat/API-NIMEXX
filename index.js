@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const app = express();
 const route = require("./src/router/route");
 const { inject } = require("@vercel/analytics");
@@ -7,6 +8,7 @@ const { inject } = require("@vercel/analytics");
 inject();  
 
 app.use(cors());  // Izinkan CORS secara global
+app.use(compression()); // Compress API responses
 app.use(route);   // Gunakan route dari file router
 
 // Penanganan error global (optional)
