@@ -6,7 +6,7 @@ const episodeHelper = require("../helper/episodeHelper")
 const Services = {
     getOngoing: async (req, res) => {
         const page = req.params.page
-        let url = page === 1 ? `${baseUrl}/ongoing-anime/` : `${baseUrl}/ongoing-anime/page/${page}/`
+        let url = Number(page) === 1 ? `${baseUrl}/ongoing-anime/` : `${baseUrl}/ongoing-anime/page/${page}/`
         try {
             const response = await services.fetchService(url, res)
             if (response.status === 200) {
@@ -44,17 +44,19 @@ const Services = {
                 ongoing: [],
             });
         } catch (error) {
-            console.log(error);
-            res.send({
-                status: false,
-                message: error,
-                ongoing: [],
-            });
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error fetching ongoing anime",
+                    ongoing: [],
+                });
+            }
         }
     },
     getCompleted: async (req, res) => {
         const page = req.params.page
-        let url = page === 1 ? `${baseUrl}/complete-anime/` : `${baseUrl}/complete-anime/page/${page}/`
+        let url = Number(page) === 1 ? `${baseUrl}/complete-anime/` : `${baseUrl}/complete-anime/page/${page}/`
     
         try {
             const response = await services.fetchService(url, res)
@@ -94,12 +96,14 @@ const Services = {
                 completed: []
             })
         } catch (error) {
-            console.log(error)
-            res.send({
-                status: false,
-                message: error,
-                completed: [],
-            });
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error fetching completed anime",
+                    completed: [],
+                });
+            }
         }
     },
     getSearch: async (req, res) => {
@@ -142,12 +146,14 @@ const Services = {
                 search: [],
             });
         } catch (error) {
-            console.log(error);
-            res.send({
-                status: false,
-                message: error,
-                search: [],
-            });
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error searching anime",
+                    search: [],
+                });
+            }
         }
     },
     getAnimeList: async (req, res) => {
@@ -184,12 +190,14 @@ const Services = {
                 anime_list: [],
             });
         } catch (error) {
-            console.log(error);
-            res.send({
-                status: false,
-                message: error,
-                anime_list: [],
-            });
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error fetching anime list",
+                    anime_list: [],
+                });
+            }
         }
     },
     getAnimeDetail: async (req, res) => {
@@ -249,13 +257,15 @@ const Services = {
                 episode_list: []
             });
         } catch (error) {
-            console.log(error);
-            res.send({
-                status: false,
-                message: error,
-                anime_detail: [],
-                episode_list: []
-            });
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error fetching anime detail",
+                    anime_detail: [],
+                    episode_list: []
+                });
+            }
         }
     },
     getEmbedByContent: async(req, res) => {
@@ -271,8 +281,10 @@ const Services = {
 
             res.send(obj);
         } catch (err) {
-            console.log(err);
-            res.send(err)
+            console.log(err.message || err);
+            if (!res.headersSent) {
+                res.status(500).send({ status: false, message: err.message || "Error" });
+            }
         }
     },
     getAnimeEpisode: async (req, res) => {
@@ -367,7 +379,10 @@ const Services = {
             obj.quality = { low_quality, medium_quality, high_quality };
             res.send(obj);
         } catch (err) {
-            console.log(err);
+            console.log(err.message || err);
+            if (!res.headersSent) {
+                res.status(500).send({ status: false, message: err.message || "Error fetching episode" });
+            }
         }
     },
     getBatchLink: async (req, res) => {
@@ -391,7 +406,10 @@ const Services = {
                 batch
             });
         } catch (error) {
-            console.log(error)
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.status(500).send({ status: false, message: error.message || "Error fetching batch" });
+            }
         }
     },
     getGenreList: async (req, res) => {
@@ -421,18 +439,20 @@ const Services = {
                 genres: []
             })
         } catch (error) {
-            console.log(error);
-            res.send({
-                status: false,
-                message: error,
-                genres: []
-            });
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error fetching genres",
+                    genres: []
+                });
+            }
         }
     },
     getGenrePage: async (req, res) => {
         const genre = req.params.genre
         const page = req.params.page
-        const url = page === 1 ? `${baseUrl}/genres/${genre}` : `${baseUrl}/genres/${genre}/page/${page}`
+        const url = Number(page) === 1 ? `${baseUrl}/genres/${genre}` : `${baseUrl}/genres/${genre}/page/${page}`
         
         try {
             const response = await services.fetchService(url, res)
@@ -473,12 +493,14 @@ const Services = {
                 genreAnime: []
             })
         } catch (error) {
-            console.log(error)
-            res.send({
-                status: false,
-                message: error,
-                genreAnime: []
-            })
+            console.log(error.message || error);
+            if (!res.headersSent) {
+                res.send({
+                    status: false,
+                    message: error.message || "Error fetching genre page",
+                    genreAnime: []
+                });
+            }
         }
     }
 }
